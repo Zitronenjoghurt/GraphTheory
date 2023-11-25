@@ -1,4 +1,6 @@
 import json
+import matplotlib.pyplot as plt
+import networkx as nx
 import os
 from typing import Optional
 
@@ -45,6 +47,12 @@ class Graph:
 
     def get_node(self, name: str) -> Optional['Node']:
         return self.nodes.get(name, None)
+    
+    def get_nodes(self) -> list[str]:
+        return list(self.nodes.keys())
+    
+    def get_edges(self) -> list[tuple]:
+        return self.edges
     
     def add_node(self, name: str) -> bool:
         if name in self.nodes:
@@ -98,6 +106,17 @@ class Graph:
             self.get_node(node2).remove_neighbor(self.get_node(node1))
 
         return True
+    
+    def visualize(self) -> None:
+        graph = nx.DiGraph() if self.directed else nx.Graph()
+
+        graph.add_nodes_from(self.get_nodes())
+        graph.add_edges_from(self.get_edges())
+
+        pos = nx.spring_layout(graph)
+
+        nx.draw(graph, pos, with_labels=True, node_color='lightgray', node_size=1500, edge_color='grey', font_size=15)
+        plt.show()
 
 class Node:
     def __init__(self, name: str) -> None:
