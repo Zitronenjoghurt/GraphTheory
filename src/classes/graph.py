@@ -109,11 +109,16 @@ class Graph:
 
         return True
     
-    def visualize(self, layout: str = "spring") -> None:
+    def to_nx_graph(self) -> nx.Graph | nx.DiGraph:
         graph = nx.DiGraph() if self.directed else nx.Graph()
 
         graph.add_nodes_from(self.get_nodes())
         graph.add_edges_from(self.get_edges())
+
+        return graph
+    
+    def visualize(self, layout: str = "spring") -> None:
+        graph = self.to_nx_graph()
 
         match layout:
             case 'circular':
@@ -135,17 +140,12 @@ class Graph:
     
     # Requires installing graphviz on your system
     # https://graphviz.org/download/
+    # Layouts include: dot, neato, fdp, sfdp, twopi, circo
     def visualize_pydot(self, layout: str = 'dot') -> None:
         try: 
-            graph = nx.DiGraph() if self.directed else nx.Graph()
-
-            graph.add_nodes_from(self.get_nodes())
-            graph.add_edges_from(self.get_edges())
-
+            graph = self.to_nx_graph()
             pydot_graph = to_pydot(graph)
-
             pydot_graph.set_layout(layout)
-
             pydot_graph.write_png('graph.png')
         except Exception:
             print("Make sure you have graphviz installed on your system and added to your PATH variable\nhttps://graphviz.org/download/")
