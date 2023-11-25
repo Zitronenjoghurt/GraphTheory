@@ -2,6 +2,8 @@ import json
 import matplotlib.pyplot as plt
 import networkx as nx
 import os
+
+from networkx.drawing.nx_pydot import to_pydot
 from typing import Optional
 
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -107,16 +109,46 @@ class Graph:
 
         return True
     
-    def visualize(self) -> None:
+    def visualize(self, layout: str = "spring") -> None:
         graph = nx.DiGraph() if self.directed else nx.Graph()
 
         graph.add_nodes_from(self.get_nodes())
         graph.add_edges_from(self.get_edges())
 
-        pos = nx.spring_layout(graph)
+        match layout:
+            case 'circular':
+                pos = nx.circular_layout(graph)
+            case 'spring':
+                pos = nx.spring_layout(graph)
+            case 'spectral':
+                pos = nx.spectral_layout(graph)
+            case 'shell':
+                pos = nx.shell_layout(graph)
+            case 'kamada_kawai':
+                pos = nx.kamada_kawai_layout(graph)
+            case _:
+                pos = nx.random_layout(graph)
 
-        nx.draw(graph, pos, with_labels=True, node_color='lightgray', node_size=1500, edge_color='grey', font_size=15)
+        nx.draw(graph, pos, with_labels=True, node_color='lightgray', node_size=500, edge_color='black', font_size=15)
+
         plt.show()
+    
+    # Requires installing graphviz on your system
+    # https://graphviz.org/download/
+    def visualize_pydot(self, layout: str = 'dot') -> None:
+        try: 
+            graph = nx.DiGraph() if self.directed else nx.Graph()
+
+            graph.add_nodes_from(self.get_nodes())
+            graph.add_edges_from(self.get_edges())
+
+            pydot_graph = to_pydot(graph)
+
+            pydot_graph.set_layout(layout)
+
+            pydot_graph.write_png('graph.png')
+        except Exception:
+            print("Make sure you have graphviz installed on your system and added to your PATH variable\nhttps://graphviz.org/download/")
 
 class Node:
     def __init__(self, name: str) -> None:
