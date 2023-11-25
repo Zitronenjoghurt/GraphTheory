@@ -3,7 +3,7 @@ from random import choice, shuffle
 
 # Label Propagation Algorithm
 # Used to find clusters in a graph
-def lpa(graph, max_iterations: int = 100000) -> dict[str, list[str]]:
+def lpa(graph, max_iterations: int = 100000) -> list[list[str]]:
     nodes = graph.get_nodes()
     cluster_state = {node : node for node in nodes}
 
@@ -53,7 +53,7 @@ def determine_cluster(graph, cluster_state: dict[str, str], node_name: str) -> s
     neighbor_clusters = get_neighbor_clusters(cluster_state, neighbors)
     return most_common_cluster(neighbor_clusters, cluster_state[node_name])
 
-def map_result(cluster_state: dict[str, str]) -> dict[str, list[str]]:
+def map_result(cluster_state: dict[str, str]) -> list[list[str]]:
     result = {}
 
     for node, cluster in cluster_state.items():
@@ -63,4 +63,4 @@ def map_result(cluster_state: dict[str, str]) -> dict[str, list[str]]:
         if node not in result[cluster]:
             result[cluster].append(node)
     
-    return result
+    return result.values()
