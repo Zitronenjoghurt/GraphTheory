@@ -109,6 +109,14 @@ class Graph:
 
         return True
     
+    def to_mermaid(self, direction: str = "LR") -> str:
+        mermaid = f"graph {direction};\n"
+        
+        for edge in self.get_edges():
+            mermaid += f"{edge[0]} --> {edge[1]}\n"
+        
+        return mermaid
+
     def to_nx_graph(self) -> nx.Graph | nx.DiGraph:
         graph = nx.DiGraph() if self.directed else nx.Graph()
 
@@ -179,3 +187,6 @@ class Node:
     
     def get_neighbors(self) -> list['Node']:
         return list(self.neighbors.values())
+    
+    def get_neighbor_names(self) -> list[str]:
+        return [neighbor.get_name() for neighbor in self.get_neighbors()]
