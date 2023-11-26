@@ -50,6 +50,9 @@ class Graph:
     def get_node(self, name: str) -> Optional['Node']:
         return self.nodes.get(name, None)
     
+    def has_node(self, name: str) -> bool:
+        return self.get_node(name) is not None
+    
     def get_nodes(self) -> list['Node']:
         return list(self.nodes.values())
     
