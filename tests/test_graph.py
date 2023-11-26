@@ -120,3 +120,11 @@ def test_remove_edge():
 
     assert graph2.remove_edge('C', 'A') is True
     assert graph2.get_node('C').get_neighbor('A') is None
+
+def test_invert_graph():
+    graph = Graph.load_from_file('3_circle', True)
+    inverted_graph = graph.get_inverted_graph()
+
+    assert inverted_graph.get_node('A').get_neighbor_names() == ['C']
+    assert inverted_graph.get_node('B').get_neighbor_names() == ['A']
+    assert inverted_graph.get_node('C').get_neighbor_names() == ['B']
