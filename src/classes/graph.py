@@ -62,6 +62,17 @@ class Graph:
     def get_edges(self) -> list[tuple[str, str]]:
         return self.edges
     
+    def get_edges_inverted(self) -> list[tuple[str, str]]:
+        edges = self.get_edges()
+        return [(b, a) for a, b in edges]
+    
+    def get_inverted_graph(self) -> 'Graph':
+        if self.directed:
+            nodes = self.get_node_names()
+            edges = self.get_edges_inverted()
+            return Graph(nodes, edges, True)
+        return self
+    
     def add_node(self, name: str) -> bool:
         if name in self.nodes:
             return False
