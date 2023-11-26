@@ -18,14 +18,18 @@ def construct_dfs_trees(dfs: Dfs) -> list[Tree]:
     trees: list[Tree] = []
     
     for node, parent in pi.items():
-            if parent == "nil":
-                trees.append(Tree(node))
-            else:
-                add_to_trees(node, parent, trees)
+        if parent == "nil":
+            trees.append(Tree(node))
+        else:
+            add_to_trees(node, parent, trees, pi)
 
     return trees
 
-def add_to_trees(node: str, parent: str, trees: list[Tree]) -> None:
+def add_to_trees(node: str, parent: str, trees: list[Tree], pi: dict[str, str]) -> None:
      for tree in trees:
-            if tree.has_node(parent):
-                tree.add_node(parent, node)
+        if parent == "nil":
+            continue
+        if not tree.has_node(parent):
+            grandparent = pi[parent]
+            add_to_trees(parent, grandparent, trees, pi)
+        tree.add_child(node, parent)

@@ -13,16 +13,16 @@ class Tree(Graph):
     def get_root(self) -> Node:
         return self.root
     
-    def add_node(self, parent: str, node: str) -> bool:
+    def add_child(self, child: str, parent: str) -> bool:
         # Parent node does not exist
         if self.get_node(parent) is None:
             return False
         
         # Node already exists
-        if self.get_node(node) is not None:
+        if self.get_node(child) is not None:
             return False
         
-        super().add_node(node)
-        self.add_edge(parent, node)
+        super().add_node(child)
+        self.add_edge(parent, child)
 
         return True

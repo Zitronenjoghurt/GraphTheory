@@ -3,7 +3,7 @@ from ..interfaces.graph_protocol import IGraph, INode
 # Depth Field Search
 # Traversal algorithm
 class Dfs():
-    def __init__(self, graph: IGraph) -> None:
+    def __init__(self, graph: IGraph, node_order: list[str] = None) -> None:
         # discovery time
         self.d = {}
 
@@ -19,8 +19,13 @@ class Dfs():
         # white = unvisited, grey = visited, black = finished
         self.col = {node: "white" for node in graph.get_node_names()}  
 
+        nodes = graph.get_node_names()
+        if node_order is not None:
+            nodes = node_order
+        
         self.time = 1
-        for node in graph.get_nodes():
+        for node_name in nodes:
+            node = graph.get_node(node_name)
             if self.col[node.get_name()] == "white":
                 self.dfs_visit(node)
 

@@ -2,6 +2,7 @@ from src.classes.graph import Graph
 from src.modules.lpa import lpa
 from src.modules.dfs import Dfs
 from src.modules.dfs_graph import construct_dfs_trees, construct_dfs_graph
+from src.modules.kosaraju import find_sccs
 
 graph = Graph.load_from_file('pvl_6', True)
 
@@ -13,6 +14,7 @@ dfs = Dfs(graph)
 print(f"Ordered by first visited:\n{dfs.get_discovery_sequence()}\n")
 print(f"Ordered by first finished:\n{dfs.get_finishing_sequence()}\n")
 print(f"Low values:\n{dfs.get_low_values()}\n")
+print(f"Strongly connected components:\n{find_sccs(graph)}\n")
 
 trees = construct_dfs_trees(dfs)
 dfs_graph = construct_dfs_graph(dfs)
