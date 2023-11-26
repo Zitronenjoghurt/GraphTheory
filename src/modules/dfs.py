@@ -1,5 +1,4 @@
 from ..interfaces.graph_protocol import IGraph, INode
-from ..classes.tree import Tree
 
 # Depth Field Search
 # Traversal algorithm
@@ -22,9 +21,6 @@ class Dfs():
             if self.col[node.get_name()] == "white":
                 self.dfs_visit(node)
 
-        self.trees: list[Tree] = []
-        self.construct_trees()
-
     def dfs_visit(self, node: INode) -> None:
         node_name = node.get_name()
 
@@ -41,15 +37,3 @@ class Dfs():
         self.col[node_name] = "black"
         self.f[node_name] = self.time
         self.time += 1
-
-    def construct_trees(self) -> None:
-        for node, parent in self.pi.items():
-            if parent == "nil":
-                self.trees.append(Tree(node))
-            else:
-                self.add_to_trees(node, parent)
-    
-    def add_to_trees(self, node, parent) -> None:
-        for tree in self.trees:
-            if tree.has_node(parent):
-                tree.add_node(parent, node)

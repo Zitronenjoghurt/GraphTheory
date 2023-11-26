@@ -64,4 +64,4 @@ def map_result(cluster_state: dict[str, str]) -> list[list[str]]:
         if node not in result[cluster]:
             result[cluster].append(node)
     
-    return result.values()
+    return list(result.values())
