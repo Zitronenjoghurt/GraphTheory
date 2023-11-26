@@ -56,7 +56,7 @@ class Graph:
     def get_node_names(self) -> list[str]:
         return list(self.nodes.keys())
     
-    def get_edges(self) -> list[tuple]:
+    def get_edges(self) -> list[tuple[str, str]]:
         return self.edges
     
     def add_node(self, name: str) -> bool:

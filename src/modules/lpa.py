@@ -1,9 +1,10 @@
 from collections import Counter
+from ..interfaces.graph_protocol import IGraph
 from random import choice, shuffle
 
 # Label Propagation Algorithm
 # Used to find clusters in a graph
-def lpa(graph, max_iterations: int = 100000) -> list[list[str]]:
+def lpa(graph: IGraph, max_iterations: int = 100000) -> list[list[str]]:
     nodes = graph.get_node_names()
     cluster_state = {node : node for node in nodes}
 
@@ -46,7 +47,7 @@ def most_common_cluster(clusters: list, current_cluster: str) -> str:
     
     return choice(most_common)
 
-def determine_cluster(graph, cluster_state: dict[str, str], node_name: str) -> str:
+def determine_cluster(graph: IGraph, cluster_state: dict[str, str], node_name: str) -> str:
     node = graph.get_node(node_name)
     neighbors = node.get_neighbor_names()
 
