@@ -3,7 +3,7 @@ from src.classes.tree import Tree
 def test_init():
     tree = Tree('A')
     assert tree.get_root().get_name() == 'A'
-    assert tree.get_nodes() == ['A']
+    assert tree.get_node_names() == ['A']
     assert tree.get_edges() == []
 
 def test_add_node():

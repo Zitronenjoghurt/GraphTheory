@@ -4,7 +4,7 @@ from random import choice, shuffle
 # Label Propagation Algorithm
 # Used to find clusters in a graph
 def lpa(graph, max_iterations: int = 100000) -> list[list[str]]:
-    nodes = graph.get_nodes()
+    nodes = graph.get_node_names()
     cluster_state = {node : node for node in nodes}
 
     changed = True

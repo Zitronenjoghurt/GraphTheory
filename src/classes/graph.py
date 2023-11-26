@@ -50,7 +50,10 @@ class Graph:
     def get_node(self, name: str) -> Optional['Node']:
         return self.nodes.get(name, None)
     
-    def get_nodes(self) -> list[str]:
+    def get_nodes(self) -> list['Node']:
+        return list(self.nodes.values())
+    
+    def get_node_names(self) -> list[str]:
         return list(self.nodes.keys())
     
     def get_edges(self) -> list[tuple]:
@@ -120,7 +123,7 @@ class Graph:
     def to_nx_graph(self) -> nx.Graph | nx.DiGraph:
         graph = nx.DiGraph() if self.directed else nx.Graph()
 
-        graph.add_nodes_from(self.get_nodes())
+        graph.add_nodes_from(self.get_node_names())
         graph.add_edges_from(self.get_edges())
 
         return graph
