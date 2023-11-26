@@ -10,6 +10,9 @@ class Dfs():
         # finishing time
         self.f = {} 
 
+        # low value
+        self.l = {}
+
         # pi(node) = node which discovered the specified node
         self.pi = {node: "nil" for node in graph.get_node_names()} 
 
@@ -26,6 +29,7 @@ class Dfs():
 
         self.col[node_name] = "grey"
         self.d[node_name] = self.time
+        self.l[node_name] = self.time
         self.time += 1
         
         for neighbor in node.get_neighbors():
@@ -33,13 +37,31 @@ class Dfs():
             if self.col[neighbor_name] == "white":
                 self.pi[neighbor_name] = node_name
                 self.dfs_visit(neighbor)
+                self.l[node_name] = min(self.l[node_name], self.l[neighbor_name])
+            if self.col[neighbor_name] == "grey" and self.pi[node_name] != neighbor_name:
+                self.l[node_name] = min(self.l[node_name], self.d[neighbor_name])
         
         self.col[node_name] = "black"
         self.f[node_name] = self.time
         self.time += 1
 
-    def get_array_visited(self) -> list[str]:
+    def get_discovery_sequence(self) -> list[str]:
         return list(self.d.keys())
     
-    def get_array_finished(self) -> list[str]:
+    def get_finishing_sequence(self) -> list[str]:
         return list(self.f.keys())
+    
+    def get_discovery_times(self) -> dict[str, int]:
+        return self.d
+    
+    def get_finishing_times(self) -> dict[str, int]:
+        return self.f
+    
+    def get_low_values(self) -> dict[str, int]:
+        return self.l
+    
+    def get_pi(self) -> dict[str, str]:
+        return self.pi
+    
+    def get_colors(self) -> dict[str, str]:
+        return self.col
