@@ -37,3 +37,9 @@ class Dfs():
         self.col[node_name] = "black"
         self.f[node_name] = self.time
         self.time += 1
+
+    def get_array_visited(self) -> list[str]:
+        return list(self.d.keys())
+    
+    def get_array_finished(self) -> list[str]:
+        return list(self.f.keys())
