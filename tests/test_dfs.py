@@ -1,6 +1,6 @@
 from src.classes.graph import Graph
 from src.modules.dfs import Dfs
-from src.modules.dfs_tree import construct_dfs_trees
+from src.modules.dfs_graph import construct_dfs_trees, construct_dfs_graph
 
 def test_dfs():
     graph = Graph.load_from_file('pvl_6', True)
@@ -30,3 +30,10 @@ def test_dfs_tree():
     assert trees[2].get_root().get_name() == 'J'
     assert trees[2].get_node_names() == ['J']
     assert trees[2].get_edges() == []
+
+def test_dfs_graph():
+    graph = Graph.load_from_file('pvl_6', True)
+    dfs = Dfs(graph)
+    dfs_graph = construct_dfs_graph(dfs)
+
+    assert dfs_graph.get_edges() == [('A', 'B'), ('B', 'C'), ('A', 'D'), ('D', 'E'), ('E', 'F'), ('G', 'H'), ('H', 'I')]
