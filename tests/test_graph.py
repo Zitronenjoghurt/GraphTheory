@@ -65,15 +65,30 @@ def test_remove_node():
     assert graph.remove_node('C') is False
 
 def test_add_edge():
-    graph = Graph(['A', 'B', 'C'])
-    assert graph.add_edge('A', 'B') is True
-    assert graph.add_edge('B', 'C') is True
-    assert graph.add_edge('C', 'A') is True
+    # unweighted undirected
+    graph1 = Graph(['A', 'B', 'C'])
+    assert graph1.add_edge('A', 'B') is True
+    assert graph1.add_edge('A', 'B') is False
+    assert graph1.add_edge('B', 'A') is False
+    assert graph1.add_edge('B', 'C') is True
+    assert graph1.add_edge('B', 'C') is False
+    assert graph1.add_edge('C', 'B') is False
+    assert graph1.add_edge('C', 'A') is True
+    assert graph1.add_edge('C', 'A') is False
+    assert graph1.add_edge('A', 'C') is False
 
+    assert graph1.get_node('A').get_neighbor_names() == ['B', 'C']
+    assert graph1.get_node('B').get_neighbor_names() == ['A', 'C']
+    assert graph1.get_node('C').get_neighbor_names() == ['B', 'A']
+
+    # unweighted directed
     graph2 = Graph(['A', 'B', 'C'], directed=True)
     assert graph2.add_edge('A', 'B') is True
+    assert graph2.add_edge('A', 'B') is False
     assert graph2.add_edge('B', 'C') is True
+    assert graph2.add_edge('B', 'C') is False
     assert graph2.add_edge('C', 'A') is True
+    assert graph2.add_edge('C', 'A') is False
 
     assert graph2.get_node('A').get_neighbor('B') is not None
     assert graph2.get_node('A').get_neighbor('C') is None
@@ -81,6 +96,42 @@ def test_add_edge():
     assert graph2.get_node('B').get_neighbor('C') is not None
     assert graph2.get_node('C').get_neighbor('A') is not None
     assert graph2.get_node('C').get_neighbor('B') is None
+
+    assert graph2.add_edge('B', 'A') is True
+    assert graph2.add_edge('C', 'B') is True
+    assert graph2.add_edge('A', 'C') is True
+
+    # weighted undirected
+    graph3 = Graph(['A', 'B', 'C'])
+    assert graph3.add_edge('A', 'B', 1337) is True
+    assert graph3.add_edge('B', 'C', 27) is True
+    assert graph3.add_edge('C', 'A', 42) is True
+
+    assert graph3.get_node('A').get_weights() == {'B': 1337, 'C': 42}
+    assert graph3.get_node('A').get_weight('B') == 1337
+    assert graph3.get_node('A').get_weight('C') == 42
+    assert graph3.get_node('B').get_weights() == {'A': 1337, 'C': 27}
+    assert graph3.get_node('B').get_weight('A') == 1337
+    assert graph3.get_node('B').get_weight('C') == 27
+    assert graph3.get_node('C').get_weights() == {'B': 27, 'A': 42}
+    assert graph3.get_node('C').get_weight('A') == 42
+    assert graph3.get_node('C').get_weight('B') == 27
+
+    # weighted directed
+    graph4 = Graph(['A', 'B', 'C'], directed=True)
+    assert graph4.add_edge('A', 'B', 1337) is True
+    assert graph4.add_edge('B', 'C', 27) is True
+    assert graph4.add_edge('C', 'A', 42) is True
+
+    assert graph4.get_node('A').get_weights() == {'B': 1337}
+    assert graph4.get_node('A').get_weight('B') == 1337
+    assert graph4.get_node('A').get_weight('C') is None
+    assert graph4.get_node('B').get_weights() == {'C': 27}
+    assert graph4.get_node('B').get_weight('A') is None
+    assert graph4.get_node('B').get_weight('C') == 27
+    assert graph4.get_node('C').get_weights() == {'A': 42}
+    assert graph4.get_node('C').get_weight('A') == 42
+    assert graph4.get_node('C').get_weight('B') is None
 
 def test_remove_edge():
     graph = Graph.load_from_file('3_circle')

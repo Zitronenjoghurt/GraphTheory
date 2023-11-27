@@ -90,7 +90,7 @@ class Graph:
         
         return True
     
-    def add_edge(self, node1: str, node2: str) -> bool:
+    def add_edge(self, node1: str, node2: str, weight: int = 1) -> bool:
         if self.get_node(node1) is None or self.get_node(node2) is None:
             return False
         
@@ -98,9 +98,11 @@ class Graph:
             return False
 
         self.edges.append((node1, node2))
-        self.get_node(node1).add_neighbor(self.get_node(node2))
+        self.get_node(node1).add_neighbor(self.get_node(node2), weight)
+        
         if not self.directed:
-            self.get_node(node2).add_neighbor(self.get_node(node1))
+            self.edges.append((node2, node1))
+            self.get_node(node2).add_neighbor(self.get_node(node1), weight)
 
         return True
     
@@ -179,16 +181,18 @@ class Node:
     def __init__(self, name: str) -> None:
         self.name = name
         self.neighbors = {}
+        self.weights = {}
 
     def get_name(self) -> str:
         return self.name
 
-    def add_neighbor(self, neighbor: 'Node') -> bool:
+    def add_neighbor(self, neighbor: 'Node', weight: int = 1) -> bool:
         name = neighbor.get_name()
         if name in self.neighbors:
             return False
         
         self.neighbors[name] = neighbor
+        self.weights[name] = weight
         return True
 
     def remove_neighbor(self, neighbor: 'Node') -> bool:
@@ -207,3 +211,9 @@ class Node:
     
     def get_neighbor_names(self) -> list[str]:
         return [neighbor.get_name() for neighbor in self.get_neighbors()]
+    
+    def get_weight(self, neighbor: str) -> Optional[int]:
+        return self.weights.get(neighbor, None)
+
+    def get_weights(self) -> dict[str, int]:
+        return self.weights
