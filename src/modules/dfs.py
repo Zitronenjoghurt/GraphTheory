@@ -19,6 +19,9 @@ class Dfs():
         # white = unvisited, grey = visited, black = finished
         self.col = {node: "white" for node in graph.get_node_names()}  
 
+        # contains step-by-step what the DFS did at what time
+        self.log = []
+
         nodes = graph.get_node_names()
         if node_order is not None:
             nodes = node_order
@@ -35,6 +38,7 @@ class Dfs():
         self.col[node_name] = "grey"
         self.d[node_name] = self.time
         self.l[node_name] = self.time
+        self.log.append(f"{self.time}: discovered {node_name}")
         self.time += 1
         
         for neighbor in node.get_neighbors():
@@ -42,12 +46,21 @@ class Dfs():
             if self.col[neighbor_name] == "white":
                 self.pi[neighbor_name] = node_name
                 self.dfs_visit(neighbor)
+
+                previous_l = self.l[node_name]
                 self.l[node_name] = min(self.l[node_name], self.l[neighbor_name])
+                current_l = self.l[node_name]
+                self.log.append(f"{self.time}: update low value of {node_name} ({previous_l} to {current_l}) by 1st condition")
+
             if self.col[neighbor_name] == "grey" and self.pi[node_name] != neighbor_name:
+                previous_l = self.l[node_name]
                 self.l[node_name] = min(self.l[node_name], self.d[neighbor_name])
+                current_l = self.l[node_name]
+                self.log.append(f"{self.time}: update low value of {node_name} ({previous_l} to {current_l}) by 2nd condition")
         
         self.col[node_name] = "black"
         self.f[node_name] = self.time
+        self.log.append(f"{self.time}: finished {node_name}")
         self.time += 1
 
     def get_discovery_sequence(self) -> list[str]:
@@ -70,3 +83,9 @@ class Dfs():
     
     def get_colors(self) -> dict[str, str]:
         return self.col
+    
+    def get_log(self) -> list[str]:
+        return self.log
+    
+    def get_log_string(self) -> str:
+        return '\n'.join(self.log)

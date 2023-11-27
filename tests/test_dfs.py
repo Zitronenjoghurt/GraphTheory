@@ -13,6 +13,7 @@ def test_dfs():
     assert dfs.get_discovery_times() == {'A': 1, 'B': 2, 'C': 3, 'D': 6, 'E': 7, 'F': 8, 'G': 13, 'H': 14, 'I': 15, 'J': 19}
     assert dfs.get_finishing_times() == {'C': 4, 'B': 5, 'F': 9, 'E': 10, 'D': 11, 'A': 12, 'I': 16, 'H': 17, 'G': 18, 'J': 20}
     assert dfs.get_low_values() == {'A': 1, 'B': 1, 'C': 1, 'D': 6, 'E': 6, 'F': 6, 'G': 13, 'H': 13, 'I': 13, 'J': 19}
+    assert dfs.get_log_string() == '1: discovered A\n2: discovered B\n3: discovered C\n4: update low value of C (3 to 1) by 2nd condition\n4: finished C\n5: update low value of B (2 to 1) by 1st condition\n5: finished B\n6: update low value of A (1 to 1) by 1st condition\n6: discovered D\n7: discovered E\n8: discovered F\n9: update low value of F (8 to 6) by 2nd condition\n9: finished F\n10: update low value of E (7 to 6) by 1st condition\n10: finished E\n11: update low value of D (6 to 6) by 1st condition\n11: finished D\n12: update low value of A (1 to 1) by 1st condition\n12: finished A\n13: discovered G\n14: discovered H\n15: discovered I\n16: update low value of I (15 to 13) by 2nd condition\n16: finished I\n17: update low value of H (14 to 13) by 1st condition\n17: finished H\n18: update low value of G (13 to 13) by 1st condition\n18: finished G\n19: discovered J\n20: finished J'
 
 def test_dfs_tree():
     graph = Graph.load_from_file('pvl_6', True)

@@ -11,6 +11,7 @@ print(f"One possible clustering:\n{lpa(graph)}\n")
 
 # Traversal
 dfs = Dfs(graph)
+print(dfs.get_log_string())
 print(f"Ordered by first visited:\n{dfs.get_discovery_sequence()}\n")
 print(f"Ordered by first finished:\n{dfs.get_finishing_sequence()}\n")
 print(f"Low values:\n{dfs.get_low_values()}\n")
