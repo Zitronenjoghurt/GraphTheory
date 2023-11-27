@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import os
 
+from ..modules.utilities import get_safe
 from networkx.drawing.nx_pydot import to_pydot
 from typing import Optional
 
@@ -17,17 +18,22 @@ for name, graph in data.items():
     GRAPHS[name] = {}
     GRAPHS[name]['nodes'] = graph['nodes'] 
     GRAPHS[name]['edges'] = []
+    GRAPHS[name]['weights'] = []
     for edge in graph['edges']:
         GRAPHS[name]['edges'].append((edge[0], edge[1]))
+        if len(edge) == 3:
+            GRAPHS[name]['weights'].append(edge[2])
 # finished preparing graph data
 
 class Graph:
-    def __init__(self, nodes: list|None = None, edges: list[tuple]|None = None, directed: bool = False) -> None:
+    def __init__(self, nodes: list|None = None, edges: list[tuple]|None = None, directed: bool = False, weights: list[int]|None = None) -> None:
         # Refrain from using mutable default arguments
         if nodes is None:
             nodes = []
         if edges is None:
             edges = []
+        if weights is None:
+            weights = []
 
         self.directed = directed
         self.edges = []
@@ -36,8 +42,12 @@ class Graph:
         for node in nodes:
             self.nodes[node] = Node(node)
 
-        for edge in edges:
-            self.add_edge(edge[0], edge[1])
+        for i, edge in enumerate(edges):
+            weight = get_safe(weights, i)
+            if weight is not None:
+                self.add_edge(edge[0], edge[1], weight)
+            else:
+                self.add_edge(edge[0], edge[1])
 
     @staticmethod
     def load_from_file(graph_name: str, directed: bool = False) -> Optional['Graph']:
@@ -45,7 +55,7 @@ class Graph:
             return None
         
         graph = GRAPHS[graph_name]
-        return Graph(graph['nodes'], graph['edges'], directed)
+        return Graph(graph['nodes'], graph['edges'], directed, graph['weights'])
 
     def get_node(self, name: str) -> Optional['Node']:
         return self.nodes.get(name, None)
@@ -128,6 +138,15 @@ class Graph:
 
         return True
     
+    def set_edge_weight(self, node1: str, node2: str, weight: int) -> bool:
+        first = self.get_node(node1).set_weight(node2, weight)
+
+        second = True
+        if not self.directed:
+            second = self.get_node(node2).set_weight(node1, weight)
+
+        return first and second
+    
     def to_mermaid(self, direction: str = "LR") -> str:
         mermaid = f"graph {direction};\n"
         
@@ -201,6 +220,13 @@ class Node:
             return False
         
         self.neighbors.pop(name)
+        return True
+    
+    def set_weight(self, neighbor: str, weight: int) -> bool:
+        if neighbor not in self.neighbors:
+            return False
+        
+        self.weights[neighbor] = weight
         return True
     
     def get_neighbor(self, name: str) -> Optional['Node']:

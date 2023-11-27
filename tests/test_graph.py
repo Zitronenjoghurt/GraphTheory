@@ -1,6 +1,6 @@
 from src.classes.graph import Graph
 
-def test_init():
+def test_init_unweighted():
     graph = Graph.load_from_file('3_circle')
     A = graph.get_node('A')
     B = graph.get_node('B')
@@ -20,6 +20,32 @@ def test_init():
     assert A.get_neighbor('A') is None
     assert B.get_neighbor('B') is None
     assert C.get_neighbor('C') is None
+
+def test_init_weighted():
+    graph = Graph.load_from_file("first_weighted", True)
+    A = graph.get_node('A')
+    B = graph.get_node('B')
+    C = graph.get_node('C')
+    D = graph.get_node('D')
+    E = graph.get_node('E')
+    F = graph.get_node('F')
+    
+    assert A.get_neighbor_names() == ["B", "C"]
+    assert A.get_weight('B') == 4
+    assert A.get_weight('C') == 3
+    assert B.get_neighbor_names() == ["C", "D"]
+    assert B.get_weight('C') == 5
+    assert B.get_weight('D') == 2
+    assert C.get_neighbor_names() == ["D"]
+    assert C.get_weight('D') == 7
+    assert D.get_neighbor_names() == ["E"]
+    assert D.get_weight('E') == 2
+    assert E.get_neighbor_names() == ["A", "B", "F"]
+    assert E.get_weight('A') == 4
+    assert E.get_weight('B') == 4
+    assert E.get_weight('F') == 6
+    assert F.get_neighbor_names() == []
+    assert F.get_weights() == {}
 
 def test_add_node():
     graph = Graph()
@@ -171,6 +197,34 @@ def test_remove_edge():
 
     assert graph2.remove_edge('C', 'A') is True
     assert graph2.get_node('C').get_neighbor('A') is None
+
+def test_set_edge_weight():
+    graph = Graph.load_from_file('first_weighted', True)
+    assert graph.set_edge_weight("A", "B", 1) == True
+    assert graph.set_edge_weight("A", "C", 2) == True
+    assert graph.set_edge_weight("B", "C", 3) == True
+    assert graph.set_edge_weight("B", "D", 4) == True
+    assert graph.set_edge_weight("C", "D", 5) == True
+    assert graph.set_edge_weight("D", "E", 6) == True
+    assert graph.set_edge_weight("E", "A", 7) == True
+    assert graph.set_edge_weight("E", "B", 8) == True
+    assert graph.set_edge_weight("E", "F", 9) == True
+
+    assert graph.set_edge_weight("B", "A", 1) == False
+    assert graph.set_edge_weight("C", "A", 2) == False
+    assert graph.set_edge_weight("C", "B", 3) == False
+    assert graph.set_edge_weight("D", "B", 4) == False
+    assert graph.set_edge_weight("D", "C", 5) == False
+    assert graph.set_edge_weight("E", "D", 6) == False
+    assert graph.set_edge_weight("A", "E", 7) == False
+    assert graph.set_edge_weight("B", "E", 8) == False
+    assert graph.set_edge_weight("F", "E", 9) == False
+
+    assert graph.get_node('A').get_weights() == {'B': 1, 'C': 2}
+    assert graph.get_node('B').get_weights() == {'C': 3, 'D': 4}
+    assert graph.get_node('C').get_weights() == {'D': 5}
+    assert graph.get_node('D').get_weights() == {'E': 6}
+    assert graph.get_node('E').get_weights() == {'A': 7, 'B': 8, 'F': 9}
 
 def test_invert_graph():
     graph = Graph.load_from_file('3_circle', True)
