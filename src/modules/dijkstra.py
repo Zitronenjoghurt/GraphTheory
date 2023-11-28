@@ -77,7 +77,7 @@ class Dijkstra:
             return [start_node]
         
         closer_end_node = self.get_origin_node(start_node, end_node)
-        if closer_end_node == end_node:
+        if closer_end_node == end_node or closer_end_node is None:
             return []
         
         return self.get_shortest_path(start_node, closer_end_node) + [end_node]
