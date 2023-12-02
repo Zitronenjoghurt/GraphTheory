@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import os
 
+from .config import Config
 from ..modules.utilities import get_safe
 from networkx.drawing.nx_pydot import to_pydot
 from typing import Optional
@@ -34,7 +35,6 @@ class Graph:
                  grid_based: bool = False, 
                  coordinates: Optional[list[list[float, float, float]]] = None
                  ) -> None:
-        
         # Refrain from using mutable default arguments
         if nodes is None:
             nodes = []
@@ -44,6 +44,8 @@ class Graph:
             weights = []
         if coordinates is None:
             coordinates = []
+
+        config = Config()
 
         self.directed = directed
         self.grid_based = grid_based
@@ -60,7 +62,7 @@ class Graph:
             if not self.grid_based:
                 edge_weight = get_safe(weights, i)
             else:
-                edge_weight = self.get_node_distance(edge[0], edge[1])
+                edge_weight = self.get_node_distance(edge[0], edge[1], config.get_option('decimal_places'))
             
             if edge_weight is None:
                 edge_weight = 1
@@ -93,7 +95,7 @@ class Graph:
     def get_node_names(self) -> list[str]:
         return list(self.nodes.keys())
     
-    def get_node_distance(self, node1: str, node2: str) -> Optional[int]:
+    def get_node_distance(self, node1: str, node2: str, decimal_places: Optional[int] = None) -> Optional[int]:
         node1 = self.get_node(node1)
         node2 = self.get_node(node2)
 
@@ -102,8 +104,13 @@ class Graph:
         
         x1, y1, z1 = node1.get_coordinates()
         x2, y2, z2 = node2.get_coordinates()
+        
+        distance = math.sqrt(abs(x1 - x2)**2 + abs(y1 - y2)**2 + abs(z1 - z2)**2)
 
-        return math.sqrt(abs(x1 - x2)**2 + abs(y1 - y2)**2 + abs(z1 - z2)**2)
+        if decimal_places is not None:
+            return round(distance, decimal_places)
+        
+        return distance
     
     def get_edges(self) -> list[tuple[str, str]]:
         return self.edges

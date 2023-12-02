@@ -72,10 +72,16 @@ def test_init_grid_based():
     assert graph.get_node_distance('A', 'B') == 10
     assert graph.get_node_distance('A', 'C') == 20
     assert graph.get_node_distance('A', 'D') == 10
+    assert graph.get_node_distance('A', 'E', 2) == 14.14
+    assert graph.get_node_distance('A', 'F', 2) == 22.36
+    assert graph.get_node_distance('A', 'G') == 20
+    assert graph.get_node_distance('A', 'H', 2) == 22.36
+    assert graph.get_node_distance('A', 'I', 2) == 28.28
     assert graph.get_node_distance('B', 'C') == 10
 
     assert A.get_weight('B') == 10
     assert A.get_weight('D') == 10
+    assert A.get_weight('I') == 28.28
     assert B.get_weight('C') == 10
 
 def test_add_node():
