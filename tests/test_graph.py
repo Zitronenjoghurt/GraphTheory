@@ -92,7 +92,7 @@ def test_remove_node():
 
 def test_add_edge():
     # unweighted undirected
-    graph1 = Graph(['A', 'B', 'C'])
+    graph1 = Graph(nodes=['A', 'B', 'C'])
     assert graph1.add_edge('A', 'B') is True
     assert graph1.add_edge('A', 'B') is False
     assert graph1.add_edge('B', 'A') is False
@@ -108,7 +108,7 @@ def test_add_edge():
     assert graph1.get_node('C').get_neighbor_names() == ['B', 'A']
 
     # unweighted directed
-    graph2 = Graph(['A', 'B', 'C'], directed=True)
+    graph2 = Graph(nodes=['A', 'B', 'C'], directed=True)
     assert graph2.add_edge('A', 'B') is True
     assert graph2.add_edge('A', 'B') is False
     assert graph2.add_edge('B', 'C') is True
@@ -128,7 +128,7 @@ def test_add_edge():
     assert graph2.add_edge('A', 'C') is True
 
     # weighted undirected
-    graph3 = Graph(['A', 'B', 'C'])
+    graph3 = Graph(nodes=['A', 'B', 'C'])
     assert graph3.add_edge('A', 'B', 1337) is True
     assert graph3.add_edge('B', 'C', 27) is True
     assert graph3.add_edge('C', 'A', 42) is True

@@ -11,7 +11,7 @@ def construct_dfs_graph(dfs: Dfs) -> Graph:
         if parent != "nil":
             edges.append((parent, node))
 
-    return Graph(nodes, edges, True)
+    return Graph(nodes=nodes, edges=edges, directed=True)
 
 def construct_dfs_trees(dfs: Dfs) -> list[Tree]:
     pi = dfs.pi

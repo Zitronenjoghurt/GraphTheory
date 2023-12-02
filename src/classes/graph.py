@@ -55,7 +55,7 @@ class Graph:
             return None
         
         graph = GRAPHS[graph_name]
-        return Graph(graph['nodes'], graph['edges'], directed, graph['weights'])
+        return Graph(nodes=graph['nodes'], edges=graph['edges'], directed=directed, weights=graph['weights'])
 
     def get_node(self, name: str) -> Optional['Node']:
         return self.nodes.get(name, None)
@@ -80,7 +80,7 @@ class Graph:
         if self.directed:
             nodes = self.get_node_names()
             edges = self.get_edges_inverted()
-            return Graph(nodes, edges, True)
+            return Graph(nodes=nodes, edges=edges, directed=True)
         return self
     
     def add_node(self, name: str) -> bool:
