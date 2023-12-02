@@ -47,6 +47,37 @@ def test_init_weighted():
     assert F.get_neighbor_names() == []
     assert F.get_weights() == {}
 
+def test_init_grid_based():
+    graph = Graph.load_from_file("first_grid_based")
+    A = graph.get_node('A')
+    B = graph.get_node('B')
+    C = graph.get_node('C')
+    D = graph.get_node('D')
+    E = graph.get_node('E')
+    F = graph.get_node('F')
+    G = graph.get_node('G')
+    H = graph.get_node('H')
+    I = graph.get_node('I')
+
+    assert A.get_coordinates() == [0, 0, 0]
+    assert B.get_coordinates() == [10, 0, 0]
+    assert C.get_coordinates() == [20, 0, 0]
+    assert D.get_coordinates() == [0, 10, 0]
+    assert E.get_coordinates() == [10, 10, 0]
+    assert F.get_coordinates() == [20, 10, 0]
+    assert G.get_coordinates() == [0, 20, 0]
+    assert H.get_coordinates() == [10, 20, 0]
+    assert I.get_coordinates() == [20, 20, 0]
+
+    assert graph.get_node_distance('A', 'B') == 10
+    assert graph.get_node_distance('A', 'C') == 20
+    assert graph.get_node_distance('A', 'D') == 10
+    assert graph.get_node_distance('B', 'C') == 10
+
+    assert A.get_weight('B') == 10
+    assert A.get_weight('D') == 10
+    assert B.get_weight('C') == 10
+
 def test_add_node():
     graph = Graph()
 

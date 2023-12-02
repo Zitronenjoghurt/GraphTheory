@@ -1,4 +1,5 @@
 import json
+import math
 import matplotlib.pyplot as plt
 import networkx as nx
 import os
@@ -18,15 +19,22 @@ for name, graph in data.items():
     GRAPHS[name] = {}
     GRAPHS[name]['nodes'] = graph['nodes'] 
     GRAPHS[name]['edges'] = []
-    GRAPHS[name]['weights'] = []
+    GRAPHS[name]['weights'] = graph.get('weights', [])
+    GRAPHS[name]['coordinates'] = graph.get('coordinates', [])
     for edge in graph['edges']:
         GRAPHS[name]['edges'].append((edge[0], edge[1]))
-        if len(edge) == 3:
-            GRAPHS[name]['weights'].append(edge[2])
 # finished preparing graph data
 
 class Graph:
-    def __init__(self, nodes: list|None = None, edges: list[tuple]|None = None, directed: bool = False, weights: list[int]|None = None) -> None:
+    def __init__(self, 
+                 nodes: Optional[list] = None, 
+                 edges: Optional[list[tuple]] = None, 
+                 directed: bool = False, 
+                 weights: Optional[list[int]] = None, 
+                 grid_based: bool = False, 
+                 coordinates: Optional[list[list[float, float, float]]] = None
+                 ) -> None:
+        
         # Refrain from using mutable default arguments
         if nodes is None:
             nodes = []
@@ -34,20 +42,30 @@ class Graph:
             edges = []
         if weights is None:
             weights = []
+        if coordinates is None:
+            coordinates = []
 
         self.directed = directed
+        self.grid_based = grid_based
         self.edges = []
         
         self.nodes = {}
-        for node in nodes:
-            self.nodes[node] = Node(node)
+        for i, node in enumerate(nodes):
+            node_coordinates = get_safe(coordinates, i)
+            if node_coordinates is None:
+                node_coordinates = (0, 0, 0)
+            self.nodes[node] = Node(node, node_coordinates)
 
         for i, edge in enumerate(edges):
-            weight = get_safe(weights, i)
-            if weight is not None:
-                self.add_edge(edge[0], edge[1], weight)
+            if not self.grid_based:
+                edge_weight = get_safe(weights, i)
             else:
-                self.add_edge(edge[0], edge[1])
+                edge_weight = self.get_node_distance(edge[0], edge[1])
+            
+            if edge_weight is None:
+                edge_weight = 1
+
+            self.add_edge(edge[0], edge[1], edge_weight)
 
     @staticmethod
     def load_from_file(graph_name: str, directed: bool = False) -> Optional['Graph']:
@@ -55,7 +73,13 @@ class Graph:
             return None
         
         graph = GRAPHS[graph_name]
-        return Graph(nodes=graph['nodes'], edges=graph['edges'], directed=directed, weights=graph['weights'])
+        nodes = graph.get('nodes', [])
+        edges = graph.get('edges', [])
+        weights = graph.get('weights', [])
+        coordinates = graph.get('coordinates', [])
+        grid_based = len(coordinates) != 0
+
+        return Graph(nodes=nodes, edges=edges, directed=directed, weights=weights, grid_based=grid_based, coordinates=coordinates)
 
     def get_node(self, name: str) -> Optional['Node']:
         return self.nodes.get(name, None)
@@ -68,6 +92,18 @@ class Graph:
     
     def get_node_names(self) -> list[str]:
         return list(self.nodes.keys())
+    
+    def get_node_distance(self, node1: str, node2: str) -> Optional[int]:
+        node1 = self.get_node(node1)
+        node2 = self.get_node(node2)
+
+        if node1 is None or node2 is None:
+            return None
+        
+        x1, y1, z1 = node1.get_coordinates()
+        x2, y2, z2 = node2.get_coordinates()
+
+        return math.sqrt(abs(x1 - x2)**2 + abs(y1 - y2)**2 + abs(z1 - z2)**2)
     
     def get_edges(self) -> list[tuple[str, str]]:
         return self.edges
@@ -197,10 +233,14 @@ class Graph:
             print("Make sure you have graphviz installed on your system and added to your PATH variable\nhttps://graphviz.org/download/")
 
 class Node:
-    def __init__(self, name: str) -> None:
+    def __init__(self, name: str, coordinates: Optional[list[float, float, float]] = None) -> None:
+        if coordinates is None:
+            coordinates = [0, 0, 0]
+
         self.name = name
         self.neighbors = {}
         self.weights = {}
+        self.coordinates = coordinates
 
     def get_name(self) -> str:
         return self.name
@@ -243,3 +283,6 @@ class Node:
 
     def get_weights(self) -> dict[str, int]:
         return self.weights
+    
+    def get_coordinates(self) -> list[float, float, float]:
+        return self.coordinates
